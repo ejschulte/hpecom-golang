@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"reflect"
 
-	"example.local/hpecom/utils"
+	"github.com/HewlettPackard/oneview-golang/utils"
 )
 
 var (

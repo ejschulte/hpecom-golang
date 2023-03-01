@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"example.local/hpecom/rest"
+	"github.com/ejschulte/hpecom-golang/rest"
 )
 
 type ComClient struct {

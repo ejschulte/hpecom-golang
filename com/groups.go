@@ -3,7 +3,7 @@ package com
 import (
 	"encoding/json"
 
-	"example.local/hpecom/rest"
+	"github.com/ejschulte/hpecom-golang/rest"
 )
 
 type GroupList struct {

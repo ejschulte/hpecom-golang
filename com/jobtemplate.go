@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"example.local/hpecom/rest"
+	"github.com/ejschulte/hpecom-golang/rest"
 )
 
 type JobTemplateList struct {

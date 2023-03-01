@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"example.local/hpecom/com"
+	"github.com/ejschulte/hpecom-golang/com"
 )
 
 func main() {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"example.local/hpecom/rest"
+	"github.com/ejschulte/hpecom-golang/rest"
 )
 
 type ReportList struct {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"example.local/hpecom/rest"
+	"github.com/ejschulte/hpecom-golang/rest"
 )
 
 type ServerList struct {
