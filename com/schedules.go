@@ -1,6 +1,11 @@
 package com
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+
+	"github.com/ejschulte/hpecom-golang/rest"
+)
 
 type ScheduleList struct {
 	Offset int        `json:"offset,omitempty"`
@@ -34,7 +39,7 @@ type ScheduleDetails struct {
 
 type ScheduleOperation struct {
 	Type         string      `json:"type,omitempty"`
-	TimeoutInSec string      `json:"timeoutInSec,omitempty"`
+	TimeoutInSec float64     `json:"timeoutInSec,omitempty"`
 	Method       string      `json:"method,omitempty"`
 	Uri          string      `json:"uri,omitempty"`
 	Query        interface{} `json:"query,omitempty"`
@@ -52,56 +57,78 @@ type ScheduleData struct {
 }
 
 type ScheduleLastRun struct {
-	ID            string    `json:"id"`
-	OperationType string    `json:"operationType"`
-	DebugID       string    `json:"debugId"`
-	StartedAt     time.Time `json:"startedAt"`
-	DurationInSec float64   `json:"durationInSec"`
-	Summary       string    `json:"summary"`
-	Succeeded     bool      `json:"succeeded"`
-	ScheduleID    string    `json:"scheduleId"`
-	ScheduleURI   string    `json:"scheduleUri"`
-	ResourceURI   string    `json:"resourceUri"`
-	Type          string    `json:"type"`
-	Generation    int       `json:"generation"`
-	CreatedAt     time.Time `json:"createdAt"`
-	UpdatedAt     time.Time `json:"updatedAt"`
-	Status        int       `json:"status"`
+	ID            string    `json:"id,omitempty"`
+	OperationType string    `json:"operationType,omitempty"`
+	DebugID       string    `json:"debugId,omitempty"`
+	StartedAt     time.Time `json:"startedAt,omitempty"`
+	DurationInSec float64   `json:"durationInSec,omitempty"`
+	Summary       string    `json:"summary,omitempty"`
+	Succeeded     bool      `json:"succeeded,omitempty"`
+	ScheduleID    string    `json:"scheduleId,omitempty"`
+	ScheduleURI   string    `json:"scheduleUri,omitempty"`
+	ResourceURI   string    `json:"resourceUri,omitempty"`
+	Type          string    `json:"type,omitempty"`
+	Generation    int       `json:"generation,omitempty"`
+	CreatedAt     time.Time `json:"createdAt,omitempty"`
+	UpdatedAt     time.Time `json:"updatedAt,omitempty"`
+	Status        int       `json:"status,omitempty"`
 	Headers       struct {
-		Date          string `json:"Date"`
-		Server        string `json:"Server"`
-		ContentType   string `json:"Content-Type"`
-		ContentLength string `json:"Content-Length"`
-	} `json:"headers"`
+		Date          string `json:"Date,omitempty"`
+		Server        string `json:"Server,omitempty"`
+		ContentType   string `json:"Content-Type,omitempty"`
+		ContentLength string `json:"Content-Length,omitempty"`
+	} `json:"headers,omitempty"`
 	Body struct {
-		ID   string `json:"id"`
+		ID   string `json:"id,omitempty"`
 		Data struct {
-		} `json:"data,omitempty"`
-		Name    string `json:"name"`
-		Type    string `json:"type"`
-		State   string `json:"state"`
-		Status  string `json:"status"`
+		} `json:"data,omitempty,omitempty"`
+		Name    string `json:"name,omitempty"`
+		Type    string `json:"type,omitempty"`
+		State   string `json:"state,omitempty"`
+		Status  string `json:"status,omitempty"`
 		Results struct {
-		} `json:"results"`
-		SelfURI  string `json:"selfUri"`
-		OriginID string `json:"originId"`
+		} `json:"results,omitempty"`
+		SelfURI  string `json:"selfUri,omitempty"`
+		OriginID string `json:"originId,omitempty"`
 		Resource struct {
-			Type        string `json:"type"`
-			ResourceURI string `json:"resourceUri"`
-		} `json:"resource"`
-		CreatedAt             string `json:"createdAt"`
-		UpdatedAt             string `json:"updatedAt"`
-		Generation            int    `json:"generation"`
-		ModifiedAt            string `json:"modifiedAt"`
-		DisplayName           string `json:"displayName"`
+			Type        string `json:"type,omitempty"`
+			ResourceURI string `json:"resourceUri,omitempty"`
+		} `json:"resource,omitempty"`
+		CreatedAt             string `json:"createdAt,omitempty"`
+		UpdatedAt             string `json:"updatedAt,omitempty"`
+		Generation            int    `json:"generation,omitempty"`
+		ModifiedAt            string `json:"modifiedAt,omitempty"`
+		DisplayName           string `json:"displayName,omitempty"`
 		ParentJobID           string `json:"parentJobId,omitempty"`
-		ResourceURI           string `json:"resourceUri"`
+		ResourceURI           string `json:"resourceUri,omitempty"`
 		StatusDetails         string `json:"statusDetails,omitempty"`
-		JobTemplateURI        string `json:"jobTemplateUri"`
-		AssociatedResourceURI string `json:"associated_resource_uri"`
-	} `json:"body"`
+		JobTemplateURI        string `json:"jobTemplateUri,omitempty"`
+		AssociatedResourceURI string `json:"associated_resource_uri,omitempty"`
+	} `json:"body,omitempty"`
 }
 
 var (
 	scheduleUri = "/compute-ops/v1beta2/schedules"
 )
+
+func (c *ComClient) GetSchedules(filters []string, offset, limit string) (ScheduleList, error) {
+
+	var (
+		q         map[string]interface{}
+		schedules ScheduleList
+	)
+
+	c.SetAuthHeaderOptions(c.GetAuthHeaders())
+	q = c.SetQueryParams(filters, offset, limit)
+
+	data, err := c.RestAPICall(rest.GET, scheduleUri, nil, q)
+	if err != nil {
+		return schedules, err
+	}
+
+	if err := json.Unmarshal([]byte(data), &schedules); err != nil {
+		return schedules, err
+	}
+
+	return schedules, nil
+}

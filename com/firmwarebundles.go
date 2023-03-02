@@ -1,5 +1,11 @@
 package com
 
+import (
+	"encoding/json"
+
+	"github.com/ejschulte/hpecom-golang/rest"
+)
+
 type FirmwareBundleList struct {
 	Offset int              `json:"offset,omitempty"`
 	Count  int              `jsont:"count,omitempty"`
@@ -28,4 +34,25 @@ type FirmwareBundle struct {
 	BundleType      string      `json:"bundleType,omitempty"`
 	HotfixBaseUri   string      `json:"hotfixBaseUri,omitempty"`
 	VmwareAddonInfo interface{} `json:"vmwareAddonInfo,omitempty"` // not currently defined in API
+}
+
+var (
+	bundleUri = "/compute-ops/v1beta2/firmware-bundles"
+)
+
+func (c *ComClient) GetFirmwareBundles(filters []string, offset, limit string) (FirmwareBundleList, error) {
+	var (
+		q       map[string]interface{}
+		bundles FirmwareBundleList
+	)
+	c.SetAuthHeaderOptions(c.GetAuthHeaders())
+	q = c.SetQueryParams(filters, offset, limit)
+	data, err := c.RestAPICall(rest.GET, bundleUri, nil, q)
+	if err != nil {
+		return bundles, err
+	}
+	if err := json.Unmarshal([]byte(data), &bundles); err != nil {
+		return bundles, err
+	}
+	return bundles, nil
 }

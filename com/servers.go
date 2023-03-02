@@ -127,9 +127,6 @@ func (c *ComClient) GetServers(filters []string, offset, limit string) (ServerLi
 		return servers, err
 	}
 
-	// for i := 0; i < servers.Count; i++ {
-	// 	servers.Items[i].Client = c
-	// }
 	return servers, nil
 }
 
